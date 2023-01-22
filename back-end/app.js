@@ -3,6 +3,7 @@ const dotenv = require('dotenv');
 const  mongoose  = require('mongoose');
 dotenv.config()
 const contactRoutes = require('./routes/contact')
+const cors = require('cors');
 
 
 const app = express();
@@ -16,6 +17,7 @@ app.use((req, res, next) =>{
     console.log(req.path, req.method)
     next()
 })
+app.use(cors());
 
 mongoose.set('strictQuery', false);
 //connect DB
