@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react'
-import {Link} from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { ContactService } from '../../../services/ContactService';
 import Spinner from '../../Spinner/Spinner';
 
-let ContactList = () =>{
-
-    let [state, setState] = useState({
+const ContactList = () =>{
+    const [listState, setListState] = useState({
         loading: false,
         contacts: [],
         filterContact: [],
@@ -13,9 +12,10 @@ let ContactList = () =>{
     });
 
     //search data
-    let [query, setQuery] = useState({
-        text: ''
-    })
+    // let [query, setQuery] = useState({
+        // text: ''
+    // })
+    const [queryString, setQueryString] = useState('')
    
     useEffect(()=>{
         fetchData();
@@ -23,47 +23,56 @@ let ContactList = () =>{
 
      //fetching data
      const fetchData = async () =>{
-        try{
-            setState({...state, loading: true});
-            let res = await ContactService.getAllContact();
-            setState({
-                ...state,
+        try {
+            setListState({...listState, loading: true });
+            
+            const res = await ContactService.getAllContact();
+            
+            setListState({
+                ...listState,
                 loading: false,
                 contacts: res.data,
                 filterContact: res.data
             })
            
-        }catch(error){
-            setState({...state, loading: false, errorMessage: error.message})
+        } catch(error) {
+            setListState({...listState, loading: false, errorMessage: error.message })
         }
      }
 
      //delete a contact
-     let clickDelete = async (id) =>{
-        try{
-           
-            let res = await ContactService.deleteContact(id);
-            fetchData();
-
-        }catch(error){
-            setState({...state, loading: false, errorMessage: error.message})
+     const clickDelete = async (id) =>{
+        try {
+            const res = await ContactService.deleteContact(id);
+            
+            // Limit API calls if possible, this will affect performance
+            // When the code pass this point, the above API call should have been successful.
+            // fetchData();
+            
+            newContacts = listState.contacts.filter(contact => contact._id === id);
+            
+            setListState({ ...listState, contacts: newContacts });
+        } catch(error) {
+            setListState({...listState, loading: false, errorMessage: error.message})
         }
      }
 
      //search contact
-     let searchContact = (e) =>{
-        setQuery({ ...query, text : e.target.value});
-        let aContact = state.contacts.filter(contact =>{
-            return contact.name.toLowerCase().includes(e.target.value.toLowerCase())
-        });
-        setState({
-            ...state,
+     const searchContact = (e) =>{
+        setQueryString(e.target.value);
+         
+        const aContact = listState.contacts.filter(contact =>
+            contact.name.toLowerCase().includes(e.target.value.toLowerCase())
+        );
+         
+        setListState({
+            ...listState,
             filterContact: aContact
         })
      }
 
 
-    let{loading, contacts, filterContact, errorMessage} = state;
+    const { loading, contacts, filterContact, errorMessage } = listState;
 
     return (
         <React.Fragment>
@@ -74,7 +83,7 @@ let ContactList = () =>{
                             <div className='col'>
                                 <p className='h3 fw-bold'>Contact Manager 
                                     <Link to={'/contacts/add'} className="btn btn-primary ms-2">
-                                    <i className='fa fa-plus-circle me-2'/> New
+                                        <i className='fa fa-plus-circle me-2'/> New
                                     </Link>
                                 </p>
                             </div>
@@ -87,7 +96,7 @@ let ContactList = () =>{
                                             <input type='text' className='form-control' 
                                                 placeholder='Search Name'
                                                 name='text'
-                                                value={query.text}
+                                                value={queryString}
                                                 onChange={searchContact}
                                             />
                                         </div>
