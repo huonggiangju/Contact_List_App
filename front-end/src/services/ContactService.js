@@ -1,32 +1,29 @@
-import axios from 'axios'
+
+import axiosRequest from "./instance";
 
 export class ContactService{
-    static API_URL = 'http://localhost:9090/v1/contact';
 
-
-    //get all
-    static getAllContact() {
-        let url = `${this.API_URL}/`;
-        return axios.get(url);
-    }
-
-    //get by ID
-    static getAContact(id){
-        return axios.get(`${this.API_URL}/${id}`)
-    }
-
-    //add new contact
-    static addContact(contact){
-        return axios.post(`${this.API_URL}/`, contact)
-    }
-
-    //update a contact
-    static updateContact(id, contact){
-        return axios.patch(`${this.API_URL}/${id}`, contact)
-    }
-
-    //delete a contact
-    static deleteContact(id){
-        return axios.delete(`${this.API_URL}/${id}`)
-    }
+    static getAllContacts = async () => {
+        return await axiosRequest.get("/");
+      };
+      
+    static getContactById = async (id) => {
+        return await axiosRequest.get(`/${id}`);
+    };
+    static addContact = async (contact) => {
+        return await axiosRequest.post("/", contact, {
+          headers: { "Content-Type": "application/json" }
+        });
+      };
+    
+    static updateContact = async (id, contact) => {
+        return await axiosRequest.patch(`/${id}`, contact, {
+            headers: { "Content-Type": "application/json" }
+        });
+    };
+    
+    static deleteContact = async (id) => {
+        return await axiosRequest.delete(`/${id}`);
+    };
 }
+

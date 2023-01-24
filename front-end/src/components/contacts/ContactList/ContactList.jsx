@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react'
-import {Link} from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { ContactService } from '../../../services/ContactService';
 import Spinner from '../../Spinner/Spinner';
 
-let ContactList = () =>{
+const ContactList = () =>{
 
-    let [state, setState] = useState({
+    const [contactList, setContactList] = useState({
         loading: false,
         contacts: [],
         filterContact: [],
@@ -13,9 +13,7 @@ let ContactList = () =>{
     });
 
     //search data
-    let [query, setQuery] = useState({
-        text: ''
-    })
+    const [query, setQuery] = useState('')
    
     useEffect(()=>{
         fetchData();
@@ -23,47 +21,47 @@ let ContactList = () =>{
 
      //fetching data
      const fetchData = async () =>{
-        try{
-            setState({...state, loading: true});
-            let res = await ContactService.getAllContact();
-            setState({
-                ...state,
+        try {
+            setContactList({ ...contactList, loading: true });
+            const res = await ContactService.getAllContacts();
+            setContactList({
+                ...contactList,
                 loading: false,
                 contacts: res.data,
                 filterContact: res.data
             })
            
-        }catch(error){
-            setState({...state, loading: false, errorMessage: error.message})
+        } catch (error) {
+            setContactList({ ...contactList, loading: false, errorMessage: error.message })
         }
      }
 
      //delete a contact
-     let clickDelete = async (id) =>{
-        try{
+     const clickDelete = async (id) =>{
+        try {
            
-            let res = await ContactService.deleteContact(id);
+            const res = await ContactService.deleteContact(id);
             fetchData();
 
-        }catch(error){
-            setState({...state, loading: false, errorMessage: error.message})
+        } catch( error ){
+            setContactList({ ...contactList, loading: false, errorMessage: error.message })
         }
      }
 
      //search contact
-     let searchContact = (e) =>{
-        setQuery({ ...query, text : e.target.value});
-        let aContact = state.contacts.filter(contact =>{
-            return contact.name.toLowerCase().includes(e.target.value.toLowerCase())
+     const searchContact = (e) =>{
+        setQuery({ ...query, text : e.target.value });
+        const aContact = contactList.contacts.filter(contact =>{
+            return contact.name.toLowerCase().includes( e.target.value.toLowerCase() )
         });
-        setState({
-            ...state,
+        setContactList ({
+            ...contactList,
             filterContact: aContact
         })
      }
 
 
-    let{loading, contacts, filterContact, errorMessage} = state;
+    const{ loading, contacts, filterContact, errorMessage } = contactList;
 
     return (
         <React.Fragment>
@@ -87,8 +85,8 @@ let ContactList = () =>{
                                             <input type='text' className='form-control' 
                                                 placeholder='Search Name'
                                                 name='text'
-                                                value={query.text}
-                                                onChange={searchContact}
+                                                value={ query.text }
+                                                onChange={ searchContact }
                                             />
                                         </div>
                                     </div>
@@ -115,37 +113,37 @@ let ContactList = () =>{
 
                         {
                             filterContact.length > 0 &&
-                            filterContact.map(contact =>(
+                            filterContact.map ( contact => (
 
-                                <div className="col-md-6" key={contact._id}>
+                                <div className="col-md-6" key={ contact._id }>
                                 <div className="card my-2">
                                     <div className="card-body">
                                         <div className="row align-items-center d-flex justify-content-around">
                                             <div className="col-md-4">
-                                                <img src={contact.image} alt='img' className='img-fluid contact-img'></img>
+                                                <img src={ contact.image } alt='img' className='img-fluid contact-img'></img>
                                             </div>
                                             <div className="col-md-7">
                                                 <ul className="list-group">
                                                     <li className="list-group-item list-group-item-action">
-                                                        Name: <span className='fw-bold'>{contact.name}</span>
+                                                        Name: <span className='fw-bold'>{ contact.name }</span>
                                                     </li> 
                                                     <li className="list-group-item list-group-item-action">
-                                                        Mobile: <span className='fw-bold'>{contact.phone}</span>
+                                                        Mobile: <span className='fw-bold'>{ contact.phone }</span>
                                                     </li>
                                                     <li className="list-group-item list-group-item-action">
-                                                        Email: <span className='fw-bold'>{contact.email}</span>
+                                                        Email: <span className='fw-bold'>{ contact.email }</span>
                                                     </li>
                                                 </ul>
                                                 
                                             </div>
                                             <div className="col-md-1 d-flex flex-column align-items-center">
-                                                <Link  to={`/contacts/view/${contact._id}`} className='btn btn-warning m-1'>
+                                                <Link  to={`/contacts/view/${ contact._id }`} className='btn btn-warning m-1'>
                                                     <i className='fa fa-eye'></i>
                                                 </Link>
-                                                <Link  to={`/contacts/edit/${contact._id}`} className='btn btn-primary m-1'>
+                                                <Link  to={`/contacts/edit/${ contact._id }`} className='btn btn-primary m-1'>
                                                     <i className='fa fa-pen'></i>
                                                 </Link>
-                                                <Link  className='btn btn-danger m-1' onClick={() => clickDelete(contact._id)}>
+                                                <Link  className='btn btn-danger m-1' onClick={() => clickDelete( contact._id )}>
                                                     <i className='fa fa-trash'></i>
                                                 </Link>
                                             </div>

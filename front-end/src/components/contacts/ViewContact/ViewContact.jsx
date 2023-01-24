@@ -1,15 +1,16 @@
 import React, { Component } from 'react'
 import { useEffect } from 'react';
 import { useState } from 'react';
-import {Link, useParams} from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { ContactService } from '../../../services/ContactService';
 import Spinner from '../../Spinner/Spinner';
 
 
-let ViewContact = () =>{
 
-    let{id} = useParams();
-    let [state, setState] = useState({
+const ViewContact = () =>{
+
+    const{ id } = useParams();
+    const [state, setState] = useState({
         loading: false,
         contact: {},
         errorMessage: ""
@@ -22,21 +23,21 @@ let ViewContact = () =>{
     //get a single contact
     const getData = async () =>{
         
-        try{
-            setState({...state, loading: true});
-            let res = await ContactService.getAContact(id);
+        try {
+            setState({ ...state, loading: true });
+            const res = await ContactService.getContactById(id);
             setState({
                 ...state,
                 loading: false,
                 contact: res.data
             })
            
-        }catch(error){
-            setState({...state, loading: false, errorMessage: error.message})
+        } catch (error) {
+            setState({ ...state, loading: false, errorMessage: error.message })
         }
      }
 
-     let{loading, contact, errorMessage} = state;
+     const{ loading, contact, errorMessage } = state;
 
     return (
         <React.Fragment>
@@ -58,7 +59,7 @@ let ViewContact = () =>{
                 <div className="container">
                     <div className="row align-items-center">
                         <div className="col-md-3">
-                            <img src={contact.image} alt='img' className='img-fluid contact-img'></img>
+                            <img src={contact.image} alt='img' className='img-fluid contact-img'/>
                         </div>
                         <div className="col-md-7">
                             <ul className="list-group">

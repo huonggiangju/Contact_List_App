@@ -2,22 +2,31 @@ import React, { useState, useEffect } from 'react'
 import {Link, useNavigate, useParams} from 'react-router-dom';
 import { ContactService } from '../../../services/ContactService';
 
-let AddContact = () =>{
 
-    let{id} = useParams();
-    let navigate = useNavigate();
-    let [name, setName] = useState('');
-    let [phone, setPhone] = useState('');
-    let [email, setEmail] = useState('');
-    let [image, setImage] = useState('');
+const AddContact = () =>{
 
+    const{id} = useParams();
+    const navigate = useNavigate();
+
+    const [inputs, setInputs] = useState({
+        name: "", 
+        phone: "", 
+        email: "", 
+        image: ""
+    });
+
+    const handleChange = (e) => {
+        setInputs((prevState) => ({
+          ...prevState,
+          [e.target.name]: e.target.value,
+        }));
+      };
 
 
     //add new contact
-    let addData = async () =>{
-        let contact = {name, phone, email, image}
+    const addData = async () =>{
         try{
-            let res = await ContactService.addContact(contact);
+            const res = await ContactService.addContact(inputs);
             if(res){
                 navigate('/contacts/list');
             }
@@ -28,53 +37,40 @@ let AddContact = () =>{
      }
 
      //update contact
-
-     useEffect (()=>{
-        if(id){
-            ContactService.getAContact(id)
-                .then((res) =>{
-                    setName(res.data.name);
-                    setEmail(res.data.email);
-                    setPhone(res.data.phone);
-                    setImage(res.data.image);
+     useEffect (() => {
+        if (id) {
+            ContactService.getContactById(id)
+                .then ((res) => {
+                    setInputs ({
+                        ...inputs, ...res.data
+                    })  
                 })
-                .catch((err)=>{
+                .catch ((err) => {
                     navigate('/contacts/list');
                 })
         }
      }, [])
 
-     let update = async (id)=>{
-        let contact = {name, phone, email, image}
-        try{
-            let res = await ContactService.updateContact(id, contact);
+     const update = async (id) => {
+        try {
+            const res = await ContactService.updateContact(id, inputs );
             if(res){
                 navigate('/contacts/list');
             }
 
-        }catch(error){
+        } catch (error) {
             navigate('/contacts/add');
         }
      }
 
      //form handler
-     let submitForm = async (e)=>{
+     const submitForm = async (e) => {
         e.preventDefault();
-        // addData();
-        if(id){
+        if (id) {
             update(id)
-        }else{
+        } else {
             addData();
         } 
-     }
-
-     //change title
-     let changeTitle = () =>{
-        if(id){
-            return <p className="h4 text-success fw-bold">Update Contact</p>
-        }else{
-            return <p className="h4 text-success fw-bold">Create Contact</p>
-        }
      }
    
     return (
@@ -83,9 +79,10 @@ let AddContact = () =>{
                 <div className=" container justify-content-center" >
                     <div className="row">
                         <div className="col">
-                            {
-                                changeTitle()
-                            }        
+                           
+                            <p className="h4 text-success fw-bold">
+                                {!id ?  "Create Contact" : "Update Contact" }
+                            </p>               
                         </div>
                     </div>
                     <div className="row">
@@ -96,36 +93,37 @@ let AddContact = () =>{
                                         className='form-control' 
                                         placeholder='Name'
                                         name='name'
-                                        value={name}
+                                        value={inputs.name}
                                         required={true}
-                                        onChange={(e) => setName(e.target.value)}
-                                    ></input>
+                                        onChange={handleChange}
+                                    />
                                 </div>
                                 <div className="mb-2">
                                     <input type='number' className='form-control' placeholder='Phone'
                                         name='phone'
-                                        value={phone}
+                                        value={inputs.phone}
                                         required={true}
-                                        onChange={(e) => setPhone(e.target.value)}
-                                    ></input>
+                                        onChange={handleChange}
+                                    />
+                                    
                                 </div>
                                 <div className="mb-2">
                                     <input type='email' className='form-control' placeholder='Email'
                                         name='email'
-                                        value={email}
+                                        value={inputs.email}
                                         required={true}
-                                        onChange={(e) => setEmail(e.target.value)}
-                                    ></input>
+                                        onChange={handleChange}
+                                    />
                                 </div>
                                 <div className="mb-2">
                                     <input type='text' className='form-control' placeholder='img'
                                         name='image'
-                                        value={image}
-                                        onChange={(e) => setImage(e.target.value)}
-                                    ></input>
+                                        value={inputs.image}
+                                        onChange={handleChange}
+                                    />
                                 </div>
                                 <div className="mb-2">
-                                    <input type='submit' className='btn btn-success' value="ADD"></input>
+                                    <input type='submit' className='btn btn-success' value="ADD"/>
                                     <Link to={'/contacts/list'} className='btn btn-dark ms-2'>Cancel</Link>
                                 </div>
                             </form>

@@ -4,6 +4,7 @@ const  mongoose  = require('mongoose');
 dotenv.config()
 const contactRoutes = require('./routes/contact')
 const cors = require('cors');
+const userRoutes = require('./routes/user');
 
 
 const app = express();
@@ -35,5 +36,6 @@ mongoose
 
 //routes
 app.use('/v1/contact/', contactRoutes)
+app.use('/v1/user/', userRoutes)
 
 

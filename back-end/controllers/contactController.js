@@ -12,6 +12,7 @@ const getAllContact = async (req, res) =>{
 const getContact = async (req, res) =>{
     const {id} = req.params
 
+     //check id
     if(!mongoose.Types.ObjectId.isValid(id)){
         return res.status(404).json({error: "no such contact"})
     }
@@ -39,6 +40,7 @@ const createContact = async (req, res) =>{
 const deleteContact = async(req, res) =>{
     const {id} = req.params
 
+     //check id
     if(!mongoose.Types.ObjectId.isValid(id)){
         return res.status(404).json({error: "no such contact"})
     }
@@ -54,6 +56,7 @@ const deleteContact = async(req, res) =>{
 const updateContact = async(req, res) =>{
     const {id} = req.params
 
+    //check id
     if(!mongoose.Types.ObjectId.isValid(id)){
         return res.status(404).json({error: "no such contact"})
     }

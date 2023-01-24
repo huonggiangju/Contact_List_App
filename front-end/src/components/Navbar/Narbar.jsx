@@ -11,6 +11,12 @@ let Navbar = () =>{
                         <span className='text-warning'> Manager</span>
                     </Link>
                 </div>
+                <div class="navbar-nav">
+                    <Link to={"/auth"} className="navbar-brand">Login</Link>
+                    <Link to={"/auth"} className="navbar-brand">Signup</Link>
+                    <Link to={"/auth"} className="navbar-brand">Logout</Link>
+                    
+                </div>
 
             </nav>
         </React.Fragment>
