@@ -1,80 +1,78 @@
 import React, { useState, useEffect } from 'react'
-import {Link, useNavigate, useParams} from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { ContactService } from '../../../services/ContactService';
 
-let AddContact = () =>{
-
-    let{id} = useParams();
-    let navigate = useNavigate();
-    let [name, setName] = useState('');
-    let [phone, setPhone] = useState('');
-    let [email, setEmail] = useState('');
-    let [image, setImage] = useState('');
-
-
+const AddContact = () =>{
+    const { id } = useParams();
+    const navigate = useNavigate();
+    // const [name, setName] = useState('');
+    // const [phone, setPhone] = useState('');
+    // const [email, setEmail] = useState('');
+    // const [image, setImage] = useState('');
+    const [contactInfo, setContactInfo] = useState({
+        name: '',
+        phone: '',
+        email: '',
+        image: ''
+    });
 
     //add new contact
-    let addData = async () =>{
-        let contact = {name, phone, email, image}
-        try{
-            let res = await ContactService.addContact(contact);
-            if(res){
+    const addData = async () =>{
+        // const contact = { name, phone, email, image }
+        try {
+            const res = await ContactService.addContact(contactInfo);
+            if (res) {
                 navigate('/contacts/list');
             }
 
-        }catch(error){
+        } catch(error) {
             navigate('/contacts/add');
         }
      }
 
      //update contact
-
-     useEffect (()=>{
-        if(id){
+     useEffect(()=>{
+        if (id) {
             ContactService.getAContact(id)
-                .then((res) =>{
-                    setName(res.data.name);
-                    setEmail(res.data.email);
-                    setPhone(res.data.phone);
-                    setImage(res.data.image);
+                .then((res) => {
+                    // setName(res.data.name);
+                    // setEmail(res.data.email);
+                    // setPhone(res.data.phone);
+                    // setImage(res.data.image);
+                    setContactInfo({ ...contactInfo, ...res.data });
                 })
                 .catch((err)=>{
                     navigate('/contacts/list');
-                })
+                });
         }
      }, [])
 
-     let update = async (id)=>{
-        let contact = {name, phone, email, image}
-        try{
-            let res = await ContactService.updateContact(id, contact);
-            if(res){
+     const update = async (id) => {
+        // const contact = { name, phone, email, image }
+        try {
+            const res = await ContactService.updateContact(id, contactInfo);
+            
+            if (res) {
                 navigate('/contacts/list');
             }
-
-        }catch(error){
+        } catch(error) {
             navigate('/contacts/add');
         }
      }
-
-     //form handler
-     let submitForm = async (e)=>{
-        e.preventDefault();
-        // addData();
-        if(id){
-            update(id)
-        }else{
-            addData();
-        } 
+     
+     const onChangeHandler = (e) => {
+         setContactInfo({ ...contactInfo, [e.target.name]: e.target.value });
      }
 
-     //change title
-     let changeTitle = () =>{
-        if(id){
-            return <p className="h4 text-success fw-bold">Update Contact</p>
-        }else{
-            return <p className="h4 text-success fw-bold">Create Contact</p>
-        }
+     //form handler
+     const submitForm = async (e) => {
+        e.preventDefault();
+        // addData();
+        if (id) {
+            update(id);
+        } else {
+            addData();
+        } 
      }
    
     return (
@@ -83,9 +81,9 @@ let AddContact = () =>{
                 <div className=" container justify-content-center" >
                     <div className="row">
                         <div className="col">
-                            {
-                                changeTitle()
-                            }        
+                            <p className="h4 text-success fw-bold">
+                                {!!id ? "Update" : "Create" } Contact
+                            </p>  
                         </div>
                     </div>
                     <div className="row">
@@ -98,7 +96,7 @@ let AddContact = () =>{
                                         name='name'
                                         value={name}
                                         required={true}
-                                        onChange={(e) => setName(e.target.value)}
+                                        onChange={onChangeHandler}
                                     ></input>
                                 </div>
                                 <div className="mb-2">
@@ -106,7 +104,7 @@ let AddContact = () =>{
                                         name='phone'
                                         value={phone}
                                         required={true}
-                                        onChange={(e) => setPhone(e.target.value)}
+                                        onChange={onChangeHandler}
                                     ></input>
                                 </div>
                                 <div className="mb-2">
@@ -114,14 +112,14 @@ let AddContact = () =>{
                                         name='email'
                                         value={email}
                                         required={true}
-                                        onChange={(e) => setEmail(e.target.value)}
+                                        onChange={onChangeHandler}
                                     ></input>
                                 </div>
                                 <div className="mb-2">
                                     <input type='text' className='form-control' placeholder='img'
                                         name='image'
                                         value={image}
-                                        onChange={(e) => setImage(e.target.value)}
+                                        onChange={onChangeHandler}
                                     ></input>
                                 </div>
                                 <div className="mb-2">
