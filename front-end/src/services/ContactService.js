@@ -3,7 +3,6 @@ import axios from 'axios'
 export class ContactService{
     static API_URL = 'http://localhost:9090/v1/contact';
 
-
     //get all
     static getAllContact() {
         let url = `${this.API_URL}/`;
@@ -17,11 +16,13 @@ export class ContactService{
 
     //add new contact
     static addContact(contact){
+        //! Will need to add { "Content-Type": "application/json" } to "headers"
         return axios.post(`${this.API_URL}/`, contact)
     }
 
     //update a contact
     static updateContact(id, contact){
+        //! Will need to add { "Content-Type": "application/json" } to "headers"
         return axios.patch(`${this.API_URL}/${id}`, contact)
     }
 
